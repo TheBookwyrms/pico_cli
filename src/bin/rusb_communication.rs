@@ -83,12 +83,22 @@ fn main() {
         
         let mut buf: [u8; 4096] = [0; 4096];
 
+        //loop {
         let b = pico_handle.read_bulk(output_end, &mut buf, time_read);
         match b {
-            Ok(n) => println!("received {:?}", n),
+            //Ok(n) => println!("received {:?}", str::from_utf8(&buf)),
+            Ok(n) => {
+                println!("received data");
+                let formatted_received = str::from_utf8(&buf).unwrap();
+                let a = formatted_received.replace("\0", "");
+                println!("formatted to : {:?}", a);
+            },
             //Ok(n) => print!(""),
-            Err(n) => print!("didn't receive {:?}", n),
+            //Err(n) => print!("didn't receive {:?}", n),
+            Err(n) => print!(""),
         }
+
+        //}
 
 
     //println!("{:?}", pico_device.speed());
