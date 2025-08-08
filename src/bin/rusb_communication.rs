@@ -116,6 +116,20 @@ fn main() {
 
     let data = "pico sent and received!!!".as_bytes();
     
+    
+    //
+    //
+    //
+    // REMINDER
+    // ADD START/END CHARACTER U8
+    // THIS WAY FIXES FILTERING
+    // REMINDER
+    //
+    //
+    
+    
+    
+    
     write_bulk(&data, &pico_handle);
     read_bulk(&pico_handle);
 }
