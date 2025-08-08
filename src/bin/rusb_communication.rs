@@ -57,9 +57,7 @@ fn get_pico_device(pico_handle : &DeviceHandle<Context>) -> Device<Context> {
     pico_handle.device()
 }
 
-
-fn main() {
-
+fn list_devices() {
     for device in rusb::devices().unwrap().iter() {
         let device_desc = device.device_descriptor().unwrap();
         let device_handle = device.open();
@@ -72,17 +70,20 @@ fn main() {
             device_desc.product_id(),
             device_handle,);
     }
+}
 
+
+fn main() {
+    
+    // list_devices();
 
     let pico_handle = get_pico_prepared();
     
-    display_device_info(&get_pico_device(&pico_handle));
+    //display_device_info(&get_pico_device(&pico_handle));
 
 
     let time_write = std::time::Duration::from_millis(1);
     let time_read = std::time::Duration::from_secs(3);
-    //let buffer : &mut [u8] = &mut [];
-    let write_buf: [u8; 4096] = [0; 4096];
 
 
     let data = "pico sent and received!!!";
@@ -92,13 +93,7 @@ fn main() {
     //let a = pico_handle.read_bulk(end, buffer, time);
     let a = pico_handle.write_bulk(IFACE_0_END_IN, &data_buf, time_write);
     match a {
-        Ok(n) => {
-            println!("sent data {:?}", str::from_utf8(&data_buf).unwrap());
-            //let formatted_received = str::from_utf8(&write_buf).unwrap();
-            //let a = formatted_received.replace("\0", "");
-            //println!("formatted to : {:?}", a);
-        },
-        //Ok(n) => print!(""),
+        Ok(n) => println!("sent data {:?}", str::from_utf8(&data_buf).unwrap()),
         Err(n) => print!("didn't write {:?}", n),
     }
     
@@ -106,15 +101,12 @@ fn main() {
 
     let b = pico_handle.read_bulk(IFACE_0_END_OUT, &mut read_buf, time_read);
     match b {
-        //Ok(n) => println!("received {:?}", str::from_utf8(&buf)),
         Ok(n) => {
             println!("received data");
             let formatted_received = str::from_utf8(&read_buf).unwrap();
             let a = formatted_received.replace("\0", "");
             println!("formatted to : {:?}", a);
         },
-        //Ok(n) => print!(""),
-        //Err(n) => print!("didn't receive {:?}", n),
         Err(n) => print!("didn't read {:?}", n),
     }
 }
