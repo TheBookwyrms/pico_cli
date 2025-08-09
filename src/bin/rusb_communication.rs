@@ -73,13 +73,13 @@ fn list_devices() {
 }
 
 
-fn write_bulk(data:[&u8], pico_handle : &DeviceHandle<Context>) {
+fn write_bulk(data:&[u8], pico_handle : &DeviceHandle<Context>) {
     let time_write = std::time::Duration::from_millis(1);
 
     //let a = pico_handle.read_bulk(end, buffer, time);
-    let write_result = pico_handle.write_bulk(IFACE_0_END_IN, &data_buf, time_write);
+    let write_result = pico_handle.write_bulk(IFACE_0_END_IN, data, time_write);
     match write_result {
-        Ok(n) => println!("sent data {:?}", str::from_utf8(&data_buf).unwrap()),
+        Ok(n) => println!("sent data {:?}", str::from_utf8(data).unwrap()),
         Err(n) => print!("didn't write {:?}", n),
     }
 }
@@ -90,9 +90,17 @@ fn read_bulk(pico_handle : &DeviceHandle<Context>) {
         
     let mut read_buf: [u8; 4096] = [0; 4096];
     
-    println!("test {:?}", str::from_utf8(&read_buf).unwrap());
 
     let read_result = pico_handle.read_bulk(IFACE_0_END_OUT, &mut read_buf, time_read);
+    
+
+    let a = &read_buf[0..4];
+    println!("test {:?}", a);
+
+    
+    let a = [112, 105, 99, 111, 32, 115, 101, 110, 116, 32, 97, 110, 100, 32, 114, 101, 99, 101, 105, 118, 101, 100, 33, 33, 33];
+    println!("a {:?}", str::from_utf8(&a));
+
     match read_result {
         Ok(n) => {
             println!("received data");
@@ -115,6 +123,7 @@ fn main() {
 
 
     let data = "pico sent and received!!!".as_bytes();
+    let data = "pico!!!".as_bytes();
     
     
     //
@@ -130,6 +139,6 @@ fn main() {
     
     
     
-    write_bulk(&data, &pico_handle);
+    write_bulk(data, &pico_handle);
     read_bulk(&pico_handle);
 }
