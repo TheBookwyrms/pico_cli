@@ -1,25 +1,25 @@
 use clap::Parser;
 
-/// Simple program to greet a person
-#[derive(Parser, Debug)]
+mod rusb_communication;
+
+/// CLI for pico
+#[derive(Parser, Default, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    /// Name of the person to greet
-    #[arg(short, long)]
-    name: String,
-    /// Name of the person to greet
-    #[arg(long)]
-    new: String,
-
-    /// Number of times to greet
-    #[arg(short, long, default_value_t = 1)]
-    count: u8,
+    /// message to send and receive from pico
+    #[arg(short, long, required=false)]
+    message: Option<String>,
 }
 
 fn main() {
     let args = Args::parse();
-
-    for _ in 0..args.count {
-        println!("Hello {}!", args.name);
+    
+    match args.message {
+        Some(msg) => {
+            rusb_communication::write_bulk(msg.as_str().as_bytes());
+            rusb_communication::read_bulk();
+        },
+        _ => {},
     }
+    
 }

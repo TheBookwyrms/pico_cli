@@ -73,7 +73,10 @@ fn list_devices() {
 }
 
 
-fn write_bulk(data:&[u8], pico_handle : &DeviceHandle<Context>) {
+pub fn write_bulk(data:&[u8]) {
+
+    let pico_handle = get_pico_prepared();
+
     let time_write = std::time::Duration::from_millis(1);
 
     //let a = pico_handle.read_bulk(end, buffer, time);
@@ -85,7 +88,10 @@ fn write_bulk(data:&[u8], pico_handle : &DeviceHandle<Context>) {
 }
 
 
-fn read_bulk(pico_handle : &DeviceHandle<Context>) {
+pub fn read_bulk() {
+
+    let pico_handle = get_pico_prepared();
+
     let time_read = std::time::Duration::from_secs(3);
         
     let mut read_buf: [u8; 4096] = [0; 4096];
@@ -94,26 +100,28 @@ fn read_bulk(pico_handle : &DeviceHandle<Context>) {
     let read_result = pico_handle.read_bulk(IFACE_0_END_OUT, &mut read_buf, time_read);
     
 
-    let a = &read_buf[0..4];
-    println!("test {:?}", a);
+    //let a = &read_buf[0..4];
+    //println!("test {:?}", a);
 
     
-    let a = [112, 105, 99, 111, 32, 115, 101, 110, 116, 32, 97, 110, 100, 32, 114, 101, 99, 101, 105, 118, 101, 100, 33, 33, 33];
-    println!("a {:?}", str::from_utf8(&a));
+    //let a = [112, 105, 99, 111, 32, 115, 101, 110, 116, 32, 97, 110, 100, 32, 114, 101, 99, 101, 105, 118, 101, 100, 33, 33, 33];
+    //println!("a {:?}", str::from_utf8(&a));
 
     match read_result {
         Ok(n) => {
-            println!("received data");
+            //println!("received data");
             let formatted_received = str::from_utf8(&read_buf).unwrap();
             let cleaned = formatted_received.replace("\0", "");
-            println!("formatted to : {:?}", cleaned);
+            println!("received data, formatted to : {:?}", cleaned);
         },
         Err(n) => print!("didn't read {:?}", n),
     }
 }
 
 
-fn main() {
+
+fn rusb_demo() {
+
     
     // list_devices();
 
@@ -139,6 +147,11 @@ fn main() {
     
     
     
-    write_bulk(data, &pico_handle);
-    read_bulk(&pico_handle);
+    write_bulk(data);//, &pico_handle);
+    read_bulk();//&pico_handle);
+}
+
+
+fn main() {
+    //rusb_demo();
 }

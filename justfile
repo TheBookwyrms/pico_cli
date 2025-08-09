@@ -3,7 +3,7 @@ set windows-shell  := ["powershell.exe", "-c"]
 
 rusb := "rusb_communication"
 cli_file := "cli"
-cli := if os()=="windows" { "target/debug/cli.exe" } else { "target/debug/cli" }
+cli := if os()=="windows" { "./target/debug/cli.exe" } else { "./target/debug/cli" }
 
 full_build:
    just build {{rusb}}
@@ -12,5 +12,5 @@ full_build:
 build file:
    cargo build --bin {{file}}
 
-chamber +args:
-   cli {{args}}
+chamber *args:
+   {{cli}} {{args}}
